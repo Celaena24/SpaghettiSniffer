@@ -12,7 +12,8 @@ def process_file_and_folder():
     highlights = process_file_content(file_content)
 
     # Process the folder content recursively
-    folder_insights = analyze_folder_contents(folder_content)
+    #folder_insights = analyze_folder_contents(folder_content)
+    folder_insights = []
 
     # Return the processed results
     return jsonify({
@@ -32,29 +33,37 @@ def process_file_content(file_content):
     print("Unused imports:", unused_imports)
 
 
+
+
+    for imports in unused_imports.keys():
+            #print(imports,unused_imports.get(imports))
+            highlights.append({
+                "line": unused_imports.get(imports),
+                "suggestion": imports + " library isnt used, do better!!"
+            })
     
+    for imports in unused_vars.keys():
+            #print(imports,unused_imports.get(imports))
+            highlights.append({
+                "line": unused_vars.get(imports),
+                "suggestion": imports + " variable isnt used, do better!!"
+            })
+    return highlights
 
-    # for imports in unused_imports:
+
+    # # Split content by lines and look for keywords
+    # lines = file_content.splitlines()
+    # for index, line in enumerate(lines):
+    #     if "TODO" in line:
     #         highlights.append({
-    #             "line": imports[1],
-    #             "suggestion": imports[0] + " library isnt used, do better!!"
+    #             "line": index,
+    #             "suggestion": "Complete this TODO item."
     #         })
-    # return highlights
-
-
-    # Split content by lines and look for keywords
-    lines = file_content.splitlines()
-    for index, line in enumerate(lines):
-        if "TODO" in line:
-            highlights.append({
-                "line": index,
-                "suggestion": "Complete this TODO item."
-            })
-        elif "FIXME" in line:
-            highlights.append({
-                "line": index,
-                "suggestion": "Check and fix this issue."
-            })
+    #     elif "FIXME" in line:
+    #         highlights.append({
+    #             "line": index,
+    #             "suggestion": "Check and fix this issue."
+    #         })
 
     return highlights
 
