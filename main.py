@@ -1,7 +1,7 @@
 import badexception, longfunctions, repeatedcodesegment, unusedimport
 
 #find_bad_exception_handling
-with open('test_dead_code.py') as f:
+with open('test_bad_exception_handling.py') as f:
     code = f.read()
 
 bad_handlers = badexception.find_bad_exception_handling(code)
