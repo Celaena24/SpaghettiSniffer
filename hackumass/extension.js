@@ -35,6 +35,8 @@ async function sendFileAndFolderToBackend() {
             fileContent,
             folderContent
         });
+        //console.log("RESSSPONSSSEEE")
+        console.log(response.data);
 
         if (response.data && response.data.highlights) {
             highlightLinesAndSuggestions(response.data.highlights);
@@ -78,17 +80,17 @@ function highlightLinesAndSuggestions(highlights) {
     });
 
     const decorations = highlights.map(({ line, suggestion }) => ({
-        range: new vscode.Range(line, 0, line, 100),
+        range: new vscode.Range(line-1, 0, line-1, 100),
         hoverMessage: suggestion,
     }));
 
     editor.setDecorations(decorationType, decorations);
 
-    highlights.forEach(({ line, suggestion }) => {
-        editor.edit(editBuilder => {
-            editBuilder.insert(new vscode.Position(line, 0), `// Suggestion: ${suggestion}\n`);
-        });
-    });
+    // highlights.forEach(({ line, suggestion }) => {
+    //     editor.edit(editBuilder => {
+    //         editBuilder.insert(new vscode.Position(line, 0), `// Suggestion: ${suggestion}\n`);
+    //     });
+    // });
 }
 
 // Command to trigger file and folder sending and processing
