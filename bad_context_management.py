@@ -37,11 +37,11 @@ class BadContextVisitor(ast.NodeVisitor):
         super().generic_visit(node)
 
 # Example usage
-with open('test_bad_context_management.py') as f:
-    source_code = f.read()
-tree = ast.parse(source_code)
-visitor = BadContextVisitor()
-visitor.visit(tree)
 
-print(visitor.bad_context_usage)
+
+def get_bad_context(source_code):
+    tree = ast.parse(source_code)
+    visitor = BadContextVisitor()
+    visitor.visit(tree)
+    return visitor.bad_context_usage
 
