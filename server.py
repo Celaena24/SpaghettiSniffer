@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-import unusedimport
+import unusedimport,longfunctions,badexception,bad_context_management
 app = Flask(__name__)
 
 @app.route('/process', methods=['POST'])
@@ -12,7 +12,8 @@ def process_file_and_folder():
     highlights = process_file_content(file_content)
 
     # Process the folder content recursively
-    folder_insights = analyze_folder_contents(folder_content)
+    #folder_insights = analyze_folder_contents(folder_content)
+    folder_insights = []
 
     # Return the processed results
     return jsonify({
@@ -31,30 +32,65 @@ def process_file_content(file_content):
     print("Unused variables:", unused_vars)
     print("Unused imports:", unused_imports)
 
-
+    for imports in unused_imports.keys():
+            #print(imports,unused_imports.get(imports))
+            highlights.append({
+                "line": unused_imports.get(imports),
+                "suggestion": imports + " library isnt used, do better!!",
+                "tag": "unused"
+            })
     
+    for imports in unused_vars.keys():
+            #print(imports,unused_imports.get(imports))
+            highlights.append({
+                "line": unused_vars.get(imports),
+                "suggestion": imports + " variable isnt used, do better!!",
+                "tag": "unused"
+            })
 
-    # for imports in unused_imports:
+    max_length = 50
+    long_functions = longfunctions.find_long_functions(file_content, max_length)
+    for func_name, start_line, end_line, length in long_functions:
+         highlights.append({
+                "start_line": start_line,
+                "end_line": end_line,
+                "suggestion": func_name + " too long!!!",
+                "tag": "long"
+            })
+    
+    bad_handlers = badexception.find_bad_exception_handling(file_content)
+    for lineno in bad_handlers:
+        # print(f"Bad exception: Bad exception handling found on line {lineno}")
+        highlights.append({
+                "line": lineno,
+                "suggestion": "can do better exceptions hehe",
+                "tag": "exception"
+            })
+        
+    bad_context = bad_context_management.get_bad_context(file_content)
+    highlights.append({
+                "line": bad_context[0]['line'],
+                "suggestion": "nah nah open file properly hehe",
+                "tag": "bad_context"
+            })
+
+
+    return highlights
+
+
+    # # Split content by lines and look for keywords
+    # lines = file_content.splitlines()
+    # for index, line in enumerate(lines):
+    #     if "TODO" in line:
     #         highlights.append({
-    #             "line": imports[1],
-    #             "suggestion": imports[0] + " library isnt used, do better!!"
+    #             "line": index,
+    #             "suggestion": "Complete this TODO item."
     #         })
-    # return highlights
-
-
-    # Split content by lines and look for keywords
-    lines = file_content.splitlines()
-    for index, line in enumerate(lines):
-        if "TODO" in line:
-            highlights.append({
-                "line": index,
-                "suggestion": "Complete this TODO item."
-            })
-        elif "FIXME" in line:
-            highlights.append({
-                "line": index,
-                "suggestion": "Check and fix this issue."
-            })
+    #     elif "FIXME" in line:
+    #         highlights.append({
+    #             "line": index,
+    #             "suggestion": "Check and fix this issue."
+    #         })
 
     return highlights
 

@@ -35,6 +35,8 @@ async function sendFileAndFolderToBackend() {
             fileContent,
             folderContent
         });
+        //console.log("RESSSPONSSSEEE")
+        console.log(response.data);
 
         if (response.data && response.data.highlights) {
             highlightLinesAndSuggestions(response.data.highlights);
@@ -77,18 +79,42 @@ function highlightLinesAndSuggestions(highlights) {
         backgroundColor: 'rgba(255,255,0,0.3)',
     });
 
-    const decorations = highlights.map(({ line, suggestion }) => ({
-        range: new vscode.Range(line, 0, line, 100),
+    const decorations = highlights.map(({ line, suggestion, tag }) => ({
+        // console.log("tag ",tag);
+        range: new vscode.Range(line-1, 0, line-1, 100),
         hoverMessage: suggestion,
     }));
 
-    editor.setDecorations(decorationType, decorations);
+let longDecorations = [];
+let unusedDecorations = [];
 
-    highlights.forEach(({ line, suggestion }) => {
-        editor.edit(editBuilder => {
-            editBuilder.insert(new vscode.Position(line, 0), `// Suggestion: ${suggestion}\n`);
-        });
-    });
+highlights.forEach(({ tag, suggestion, start_line, end_line, line }) => {
+    if (tag === "long") {
+        console.log("in longgg", highlights);
+        // If tag is 'long', handle the long function body decoration
+        const decorations = {
+            range: new vscode.Range(start_line - 1, 0, end_line - 1, 100), // Use both start and end lines
+            hoverMessage: suggestion,
+        };
+        longDecorations.push(decorations);
+    } else {
+        console.log("in unuseddd");
+        // If tag is 'unused', handle the unused variable decoration
+        const decorations = {
+            range: new vscode.Range(line - 1, 0, line - 1, 100),
+            hoverMessage: suggestion,
+        };
+        unusedDecorations.push(decorations);
+    }
+});
+
+// Combine all decorations
+const allDecorations = [...longDecorations, ...unusedDecorations];
+
+// Apply the decorations to the editor
+editor.setDecorations(decorationType, allDecorations);
+
+console.log("decorationsss: ", allDecorations);
 }
 
 // Command to trigger file and folder sending and processing
