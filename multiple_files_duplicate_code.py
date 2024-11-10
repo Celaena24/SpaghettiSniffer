@@ -38,9 +38,14 @@ class MultipleFileCodeDuplicationVisitor(ast.NodeVisitor):
         Extracts code blocks from a list of statements.
         Each sequence of statements is treated as a separate block.
         """
+        try:
+            cur_start=body[0].lineno
+        except:
+            return []
+
+        
         blocks = []
         current_block = []
-        cur_start=body[0].lineno
         last_line_no = cur_start
         
         for stmt in body:
@@ -86,50 +91,55 @@ def find_duplicates(blocks):
             })
     return duplicates
 
-source_files = {
-        'file1.py': '''
-x = 10
-y = 20
-if x > y:
-    print(x)
-else:
-    print(y)
+# source_files = {
+#         'file1.py': '''
+# x = 10
+# y = 20
+# if x > y:
+#     print(x)
+# else:
+#     print(y)
 
-        ''',
-        'file2.py': '''
-def function2():
-    x = 10
-    y = 20
-    if x > y:
-        print(x)
-    else:
-        print(y)
+#         ''',
+#         'file2.py': '''
+# def function2():
+#     x = 10
+#     y = 20
+#     if x > y:
+#         print(x)
+#     else:
+#         print(y)
 
-        ''',
-        'file3.py': '''
-def function3():
-    x = 10
-    y = 20
-    if x > y:
-        print(x)
-    else:
-        print(y)
-        '''
-}
+#         ''',
+#         'file3.py': '''
+# def function3():
+#     x = 10
+#     y = 20
+#     if x > y:
+#         print(x)
+#     else:
+#         print(y)
+#         '''
+# }
 
 # Parse and analyze the code
-blocks = {}
-for filename, source_code in source_files.items():
-    tree = ast.parse(source_code)
-    visitor = MultipleFileCodeDuplicationVisitor(filename, blocks)
-    visitor.visit(tree)
-    # visitor.find_duplicates()
-    blocks = visitor.blocks
 
-# Output duplicated code blocks
-for duplicate in find_duplicates(blocks):
-    print(duplicate)
-    print(f"Duplicated block found {duplicate['count']} times at lines {duplicate['lines']}")
-    print("Code structure:", duplicate['code'])
-    print()
+
+def get_duplicate_multiple(source_files):
+    blocks = {}
+    for filename, source_code in source_files.items():
+        tree = ast.parse(source_code)
+        visitor = MultipleFileCodeDuplicationVisitor(filename, blocks)
+        visitor.visit(tree)
+        # visitor.find_duplicates()
+        blocks = visitor.blocks
+    return find_duplicates(blocks)
+            # print(duplicate)
+
+    # Output duplicated code blocks
+    # for duplicate in find_duplicates(blocks):
+    #     print(duplicate)
+    #     print(f"Duplicated block found {duplicate['count']} times at lines {duplicate['lines']}")
+    #     print("Code structure:", duplicate['code'])
+    #     print()
 

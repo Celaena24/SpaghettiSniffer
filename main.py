@@ -1,4 +1,4 @@
-import badexception, longfunctions, repeatedcodesegment, unusedimport, bad_context_management, dead_code, cyclomatic_complexity, hardcoded_values, deep_nesting, too_many_params
+import badexception, longfunctions, repeatedcodesegment, unusedimport, bad_context_management, dead_code, cyclomatic_complexity, hardcoded_values, deep_nesting, too_many_params, multiple_files_duplicate_code
 
 # #find_bad_exception_handling
 # with open('test_bad_exception_handling.py') as f:
@@ -55,6 +55,9 @@ with open('test_too_man_params.py') as f:
 # deep_nest = deep_nesting.get_deep_nesting(source_code)
 # print(deep_nest)
 
-too_many = too_many_params.get_too_many_params(source_code)
-for line in too_many:
-    print(line['line'])
+# too_many = too_many_params.get_too_many_params(source_code)
+# for line in too_many:
+#     print(line['line'])
+
+interfile = multiple_files_duplicate_code.get_duplicate_multiple(source_code)
+print(interfile)
