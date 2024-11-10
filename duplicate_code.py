@@ -14,16 +14,19 @@ class CodeDuplicationVisitor(ast.NodeVisitor):
         # Process code blocks for any node with a body attribute (e.g., modules, functions, loops, conditionals)
         if hasattr(node, 'body'):
             for block in self.extract_code_blocks(node.body):
-                block_hash = self.hash_code_block(block)
+                # Ignore block length of size less than 2
+                if block[1] == block[2]: continue
+
+                block_hash = self.hash_code_block(block[0])
                 # Track block occurrences
                 if block_hash in self.blocks:
                     self.blocks[block_hash]['count'] += 1
-                    self.blocks[block_hash]['lines'].append(getattr(node, 'lineno', 1))
+                    self.blocks[block_hash]['lines'].append((block[1], block[2]))
                 else:
                     self.blocks[block_hash] = {
                         'count': 1,
-                        'lines': [getattr(node, 'lineno', 1)],
-                        'code': [ast.dump(line) for line in block]  # Store for reference
+                        'lines': [(block[1], block[2])],
+                        'code': [ast.dump(line) for line in block[0]]  # Store for reference
                     }
 
         # Continue with the normal traversal of child nodes
@@ -36,22 +39,28 @@ class CodeDuplicationVisitor(ast.NodeVisitor):
         """
         blocks = []
         current_block = []
+        cur_start=body[0].lineno
+        last_line_no = cur_start
         
         for stmt in body:
-            if isinstance(stmt, (ast.If, ast.For, ast.While, ast.With, ast.Try)):
+            if isinstance(stmt, (ast.If, ast.For, ast.While, ast.With, ast.Try, ast.FunctionDef)):
                 # Save the current block if it has statements
                 if current_block:
-                    blocks.append(current_block)
-                    current_block = []
+                    blocks.append((current_block, cur_start, stmt.lineno-1))
+                    cur_start = stmt.lineno
                 # Add the control structure's body as its own block
-                blocks.append([stmt])
+                current_block = [stmt]
+                cur_start = stmt.lineno
             else:
                 current_block.append(stmt)
+
+            last_line_no = stmt.end_lineno
         
         # Add the final block if it has statements
-        if current_block:
-            blocks.append(current_block)
-        
+        if len(current_block):
+            # blocks.append((current_block, cur_start, cur_start+len(current_block)))
+            blocks.append((current_block, cur_start, last_line_no))
+
         return blocks
 
     def hash_code_block(self, block):
