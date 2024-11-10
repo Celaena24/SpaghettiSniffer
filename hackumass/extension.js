@@ -15,6 +15,7 @@ async function sendFileAndFolderToBackend() {
 
     const document = editor.document;
     const fileContent = document.getText();
+    const current_fileName = document.fileName;
     console.log(fileContent);
 
 
@@ -33,13 +34,18 @@ async function sendFileAndFolderToBackend() {
         // Send the file content and folder content to the backend
         const response = await axios.post('http://localhost:5000/process', {
             fileContent,
-            folderContent
+            folderContent,
+            current_fileName
         });
         //console.log("RESSSPONSSSEEE")
-        console.log(response.data);
+        console.log("response.data: ",response.data);
 
         if (response.data && response.data.highlights) {
             highlightLinesAndSuggestions(response.data.highlights);
+        }
+
+        if (response.data && response.data.folderInsights) {
+
         }
     } catch (error) {
         vscode.window.showErrorMessage("Error communicating with the backend: " + error.message);
@@ -89,7 +95,7 @@ let longDecorations = [];
 let unusedDecorations = [];
 
 highlights.forEach(({ tag, suggestion, start_line, end_line, line }) => {
-    if (tag === "long") {
+    if (tag === "long" || tag === "multiple_duplicate") {
         console.log("in longgg", highlights);
         // If tag is 'long', handle the long function body decoration
         const decorations = {
