@@ -180,7 +180,6 @@ def analyze_folder_contents(folder_content,current_file):
     
     duplicate_multiple = multiple_files_duplicate_code.get_duplicate_multiple(file_contents)
 
-    print(len(duplicate_multiple))
     for duplicate in duplicate_multiple:
         for value in duplicate['lines']:
             if value[0] == current_file:
