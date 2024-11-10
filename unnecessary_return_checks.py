@@ -10,12 +10,12 @@ class UnnecessaryReturnChecker(ast.NodeVisitor):
                 # Check if the body of the if-statement only has a return statement returning a boolean
                 if (len(child.body) == 1 and isinstance(child.body[0], ast.Return) and
                     isinstance(child.body[0].value, ast.Constant) and isinstance(child.body[0].value.value, bool)):
-                    self.unnecessary_returns.append((child.lineno, child.lineno+1))
+                    self.unnecessary_returns.append(child.lineno+1)
                 
                 # Check if the else part only has a return statement returning a boolean
                 if (child.orelse and len(child.orelse) == 1 and isinstance(child.orelse[0], ast.Return) and
                     isinstance(child.orelse[0].value, ast.Constant) and isinstance(child.orelse[0].value.value, bool)):
-                    self.unnecessary_returns.append((child.orelse[0].lineno - 1, child.orelse[0].lineno))
+                    self.unnecessary_returns.append( child.orelse[0].lineno)
         
         self.generic_visit(node)
 
@@ -48,8 +48,8 @@ def get_unnecessary_checks(code):
     checker.visit(tree)
     unnecessary_returns = checker.report()
     
-    lines = []
-    for lineno in unnecessary_returns:
-        lines.append(lineno)
-        # print(f" - Line {lineno} has unnecessary if else returning boolean. Consider simplifying")
-    return lines
+    # lines = []
+    # for lineno in unnecessary_returns:
+    #     lines.append(lineno)
+    #     # print(f" - Line {lineno} has unnecessary if else returning boolean. Consider simplifying")
+    return unnecessary_returns

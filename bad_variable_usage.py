@@ -29,12 +29,12 @@ class VariableUsageChecker(ast.NodeVisitor):
                 usages = self.usages.get(var_name, [])
                 while(cur_ass < len(occurrences) and cur_use < len(usages)):
                     if(usages[cur_use] > occurrences[cur_ass]): 
-                        mult_ass.append(occurrences[cur_ass-1])
+                        # mult_ass.append(occurrences[cur_ass-1])
                         mult_ass.append(occurrences[cur_ass])
                     cur_ass += 1
                     cur_use += 1
                     
-                mult_ass += occurrences[cur_ass-1: ]
+                mult_ass += occurrences[cur_ass: ]
                 if mult_ass:
                     self.multiple_assignments.append((var_name, set(mult_ass)))
                 
@@ -58,8 +58,24 @@ class VariableUsageChecker(ast.NodeVisitor):
 #     a = x+10
 #     return z
 #     """
+    
+#     tree = ast.parse(code)
+#     checker = VariableUsageChecker()
+#     checker.visit(tree)
+#     checker.check_variables()
+#     multiple_assignments = checker.report()
+    
+#     bad_var_lines = []
+#     for var_name, occurrences in multiple_assignments:
+# #                 # print(f" - Variable assigned multiple times before usage. Variable '{var_name}' assigned at:")
+#         for lineno in occurrences:
+#             bad_var_lines.append(lineno)
+#                 # print(f"   Line {lineno}")
+#     print(bad_var_lines)
+    
+    
 
-def get_bad_variable(code):
+def get_bad_variable_usage(code):
     bad_var_lines = []
     tree = ast.parse(code)
     checker = VariableUsageChecker()

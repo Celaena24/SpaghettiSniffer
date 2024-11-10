@@ -1,5 +1,5 @@
 def foo():
-    if case1:
+    if 5>1:
         return True
     else:
         return False

@@ -3,7 +3,7 @@ from flask import Flask, request, jsonify
 import lang
 # current_file_name = os.path.basename(__file__)
 # #print("file name: ",current_file_name)
-import unusedimport,longfunctions,badexception,bad_context_management,dead_code, cyclomatic_complexity, hardcoded_values, deep_nesting, too_many_params, multiple_files_duplicate_code, cyclic_imports, bad_variable_name, bad_variable_name, comparing_against_bool_literals, print_statements, unnecessary_return_checks
+import unusedimport,longfunctions,badexception,bad_context_management,dead_code, cyclomatic_complexity, hardcoded_values, deep_nesting, too_many_params, multiple_files_duplicate_code, cyclic_imports, bad_variable_name, bad_variable_usage, comparing_against_bool_literals, print_statements, unnecessary_return_checks
 app = Flask(__name__)
 folder_insights_store = {}
 file_contents = {}
@@ -113,7 +113,7 @@ def process_file_content(file_content,folder_content,current_file):
     deep_nest = deep_nesting.get_deep_nesting(file_content)
     for nest in deep_nest:
         highlights.append({
-                        "line": value['line'],
+                        "line": nest,
                         "suggestion": lang.get_comment("Nesting is too deep. Can't do"),
                         "tag": "deep_nesting"
                     })
@@ -133,7 +133,7 @@ def process_file_content(file_content,folder_content,current_file):
                         "tag": "bad_variable_name"
                     })
     
-    bad_var_usage = bad_variable_name.get_bad_variable_name(file_content)
+    bad_var_usage = bad_variable_usage.get_bad_variable_usage(file_content)
     for line in bad_var_usage:
         highlights.append({
                         "line": line,
@@ -253,7 +253,7 @@ def analyze_folder_contents(folder_content,current_file):
                 folder_insights_store[filename].append({
                     "start_line":value[1],
                     "end_line": value[2],
-                    "suggestion": "repetitive code across files",
+                    "suggestion": lang.get_comment("repetitive code"),
                     "tag": "multiple_duplicate"
                 })
 
