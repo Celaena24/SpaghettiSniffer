@@ -5,7 +5,6 @@ __pycache__
 temp/
 __pycache__
 */node_modules
-*/.vscode
 
 
 # C extensions

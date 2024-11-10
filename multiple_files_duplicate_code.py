@@ -2,10 +2,11 @@
 import ast
 import hashlib
 
-class CodeDuplicationVisitor(ast.NodeVisitor):
-    def __init__(self):
-        self.blocks = {}  # Stores hashed blocks and their occurrences
+class MultipleFileCodeDuplicationVisitor(ast.NodeVisitor):
+    def __init__(self, filename, blocks={}):
+        self.blocks = blocks  # Stores hashed blocks and their occurrences
         self.duplicates = []
+        self.filename = filename
 
     def generic_visit(self, node):
         """
@@ -21,12 +22,12 @@ class CodeDuplicationVisitor(ast.NodeVisitor):
                 # Track block occurrences
                 if block_hash in self.blocks:
                     self.blocks[block_hash]['count'] += 1
-                    self.blocks[block_hash]['lines'].append((block[1], block[2]))
+                    self.blocks[block_hash]['lines'].append((self.filename, block[1], block[2]))
                 else:
                     self.blocks[block_hash] = {
                         'count': 1,
-                        'lines': [(block[1], block[2])],
-                        'code': [ast.dump(line) for line in block[0]]  # Store for reference
+                        'lines': [(self.filename, block[1], block[2])],
+                        'code': [ast.dump(line) for line in block[0]],  # Store for reference
                     }
 
         # Continue with the normal traversal of child nodes
@@ -71,20 +72,22 @@ class CodeDuplicationVisitor(ast.NodeVisitor):
         block_str = ''.join(ast.dump(stmt) for stmt in block)
         return hashlib.md5(block_str.encode()).hexdigest()
 
-    def find_duplicates(self):
-        """
-        Collects duplicated blocks from `self.blocks`.
-        """
-        for block_hash, data in self.blocks.items():
-            if data['count'] > 1:
-                self.duplicates.append({
-                    'count': data['count'],
-                    'lines': data['lines'],
-                    'code': data['code']
-                })
+def find_duplicates(blocks):
+    """
+    Collects duplicated blocks from `self.blocks`.
+    """
+    duplicates = []
+    for block_hash, data in blocks.items():
+        if data['count'] > 1:
+            duplicates.append({
+                'count': data['count'],
+                'lines': data['lines'],
+                'code': data['code'],
+            })
+    return duplicates
 
-# Example usage
-source_code = '''
+source_files = {
+        'file1.py': '''
 x = 10
 y = 20
 if x > y:
@@ -92,6 +95,8 @@ if x > y:
 else:
     print(y)
 
+        ''',
+        'file2.py': '''
 def function2():
     x = 10
     y = 20
@@ -100,6 +105,8 @@ def function2():
     else:
         print(y)
 
+        ''',
+        'file3.py': '''
 def function3():
     x = 10
     y = 20
@@ -107,16 +114,21 @@ def function3():
         print(x)
     else:
         print(y)
-'''
+        '''
+}
 
 # Parse and analyze the code
-tree = ast.parse(source_code)
-visitor = CodeDuplicationVisitor()
-visitor.visit(tree)
-visitor.find_duplicates()
+blocks = {}
+for filename, source_code in source_files.items():
+    tree = ast.parse(source_code)
+    visitor = MultipleFileCodeDuplicationVisitor(filename, blocks)
+    visitor.visit(tree)
+    # visitor.find_duplicates()
+    blocks = visitor.blocks
 
 # Output duplicated code blocks
-for duplicate in visitor.duplicates:
+for duplicate in find_duplicates(blocks):
+    print(duplicate)
     print(f"Duplicated block found {duplicate['count']} times at lines {duplicate['lines']}")
     print("Code structure:", duplicate['code'])
     print()

@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-import unusedimport,longfunctions,badexception,bad_context_management,dead_code, cyclomatic_complexity, hardcoded_values, deep_nesting
+import unusedimport,longfunctions,badexception,bad_context_management,dead_code, cyclomatic_complexity, hardcoded_values, deep_nesting, too_many_params
 app = Flask(__name__)
 
 @app.route('/process', methods=['POST'])
@@ -107,6 +107,14 @@ def process_file_content(file_content):
                         "line": value['line'],
                         "suggestion": "too deep cant do?",
                         "tag": "deep_nesting"
+                    })
+    
+    too_many = too_many_params.get_too_many_params(file_content)
+    for line in too_many:
+        highlights.append({
+                        "line": line['line'],
+                        "suggestion": "the params are confusing",
+                        "tag": "too_many_params"
                     })
          
          
