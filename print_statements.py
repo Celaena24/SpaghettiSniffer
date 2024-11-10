@@ -12,19 +12,24 @@ class PrintStatementChecker(ast.NodeVisitor):
     def report(self):
         return self.print_statements
 
-if __name__ == "__main__":
-    # Example code to check
-    code = """
-foo = 10
-print(foo)
-t = 5
-print("Hello World")
-    """
+# if __name__ == "__main__":
+#     # Example code to check
+#     code = """
+# foo = 10
+# print(foo)
+# t = 5
+# print("Hello World")
+#     """
 
+def get_print_statements(code):
     tree = ast.parse(code)
     checker = PrintStatementChecker()
     checker.visit(tree)
     print_stmts = checker.report()
     
+    lines = []
     for lineno in print_stmts:
-        print(f" - Print statement found at line {lineno}")
+        lines.append(lineno)
+        # print(f" - Print statement found at line {lineno}")
+    
+    return lines

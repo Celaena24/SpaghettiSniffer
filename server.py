@@ -2,10 +2,11 @@ import os,sys
 from flask import Flask, request, jsonify
 # current_file_name = os.path.basename(__file__)
 # #print("file name: ",current_file_name)
-import unusedimport,longfunctions,badexception,bad_context_management,dead_code, cyclomatic_complexity, hardcoded_values, deep_nesting, too_many_params, multiple_files_duplicate_code
+import unusedimport,longfunctions,badexception,bad_context_management,dead_code, cyclomatic_complexity, hardcoded_values, deep_nesting, too_many_params, multiple_files_duplicate_code, cyclic_imports, bad_variable_name, bad_variable_name, comparing_against_bool_literals, print_statements, unnecessary_return_checks
 app = Flask(__name__)
 folder_insights_store = {}
 file_contents = {}
+cycle_data_global = {}
 
 @app.route('/process', methods=['POST'])
 def process_file_and_folder():
@@ -123,8 +124,48 @@ def process_file_content(file_content,folder_content,current_file):
                         "suggestion": "the params are confusing",
                         "tag": "too_many_params"
                     })
+    bad_variables = bad_variable_name.get_bad_variable_name(file_content)
+    for line in bad_variables:
+        highlights.append({
+                        "line": line,
+                        "suggestion": "bad variable name",
+                        "tag": "bad_variable_name"
+                    })
+    
+    bad_var_usage = bad_variable_name.get_bad_variable_name(file_content)
+    for line in bad_var_usage:
+        highlights.append({
+                        "line": line,
+                        "suggestion": "bad variable usage",
+                        "tag": "bad_variable_usage"
+                    })
+        
+    bad_comparison = comparing_against_bool_literals.get_bad_bool_comparisons(file_content)
+    for line in bad_comparison:
+        highlights.append({
+                        "line": line,
+                        "suggestion": "bad boolean comparison",
+                        "tag": "bad_bool_comparison"
+                    })
+    statements = print_statements.get_print_statements(file_content)
+    for line in statements:
+        highlights.append({
+                        "line": line,
+                        "suggestion": "print statement",
+                        "tag": "print_statement"
+                    })
+        
+    unnecessary_checks = unnecessary_return_checks.get_unnecessary_checks(file_content)
+    for line in unnecessary_checks:
+        highlights.append({
+                        "line": line,
+                        "suggestion": "unnecessary return check",
+                        "tag": "unnecessary_return_check"
+                    })
+
     # folder_insights = analyze_folder_contents(folder_content,current_file)
     analyze_folder_contents(folder_content,current_file)
+    print("cycle data global", cycle_data_global)
     # print("current_file_name: ",current_file)
     # print("\n\nfolder_insights: ",folder_insights[current_file])
     # print("folder insights: ",folder_insights_store.keys())
@@ -132,6 +173,18 @@ def process_file_content(file_content,folder_content,current_file):
         for line in folder_insights_store[current_file]:
             highlights.append(line)
     print("\n\nhighlights: ",highlights)
+
+    for data in cycle_data_global[current_file.split('.')[0]]:
+        highlights.append({
+                        "line": data,
+                        "suggestion": "cyclic import!!!",
+                        "tag": "cyclic_import"
+                    })
+
+
+    
+
+
 
     return highlights
 
@@ -177,8 +230,17 @@ def analyze_folder_contents(folder_content,current_file):
 
             file_contents[filename] = content
             folder_insights_store[filename] = []
+            cycle_data_global[filename.split('.')[0]] = []
     
     duplicate_multiple = multiple_files_duplicate_code.get_duplicate_multiple(file_contents)
+    cycle = cyclic_imports.get_cyclic(file_contents)
+    print("priting cycle", cycle)
+
+    for value in cycle.items():
+        current_file_name = current_file.split('.')[0]
+        if value[0] == current_file_name:
+            cycle_data_global[current_file_name] = value[1]
+
 
     for duplicate in duplicate_multiple:
         for value in duplicate['lines']:

@@ -25,6 +25,7 @@ import ast
 class CyclomaticComplexityVisitor(ast.NodeVisitor):
     def __init__(self):
         self.complexities = []  # Stores complexity data for each function
+        self.current_complexity = 0
 
     def visit_FunctionDef(self, node):
         """

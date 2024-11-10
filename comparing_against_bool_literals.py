@@ -23,12 +23,16 @@ if foo != False:
     print("Not false")
     """
 
+def get_bad_bool_comparisons(code):
     tree = ast.parse(code)
     checker = ComparisonAgainstBooleanLiterals()
     checker.visit(tree)
     comparison_with_bool = checker.report()
     
+    lines = []
     for value, lineno in comparison_with_bool:
-        print(f" - Comparison with '{value}' found at line {lineno}")
+        lines.append(lineno)
+        # print(f" - Comparison with '{value}' found at line {lineno}")
+    return lines
     
     

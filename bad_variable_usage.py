@@ -42,23 +42,25 @@ class VariableUsageChecker(ast.NodeVisitor):
     def report(self):
         return self.multiple_assignments
 
-if __name__ == "__main__":
-    # Example code to check
-    code = """
-def example():
-    x = 10
-    x = 20
-    x = 30
-    y = 30
-    z = x + 1
-    a = 50
-    t = a*5
-    a = 5
-    a = 7
-    a = x+10
-    return z
-    """
+# if __name__ == "__main__":
+#     # Example code to check
+#     code = """
+# def example():
+#     x = 10
+#     x = 20
+#     x = 30
+#     y = 30
+#     z = x + 1
+#     a = 50
+#     t = a*5
+#     a = 5
+#     a = 7
+#     a = x+10
+#     return z
+#     """
 
+def get_bad_variable(code):
+    bad_var_lines = []
     tree = ast.parse(code)
     checker = VariableUsageChecker()
     checker.visit(tree)
@@ -66,9 +68,11 @@ def example():
     multiple_assignments = checker.report()
     
     for var_name, occurrences in multiple_assignments:
-                print(f" - Variable assigned multiple times before usage. Variable '{var_name}' assigned at:")
-                for lineno in occurrences:
-                    print(f"   Line {lineno}")
+                # print(f" - Variable assigned multiple times before usage. Variable '{var_name}' assigned at:")
+        for lineno in occurrences:
+            bad_var_lines.append(lineno)
+                # print(f"   Line {lineno}")
+    return bad_var_lines
     
     
     

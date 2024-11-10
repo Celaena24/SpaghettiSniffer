@@ -69,23 +69,30 @@ class ImportDependencyAnalyzer:
         return circular_imports
 
 # Example usage
-files = {
-    'file_a.py': '''
-import file_c\n
-import file_d as dd\n
-    ''',
-    'file_b.py': '''
-import file_c\n
-import file_a\n
-    ''',
-    'file_c.py': 'import file_d\n',
-    'file_d.py': 'import file_b\n'
-}
+# files = {
+#     'file_a.py': '''
+# import file_c\n
+# import file_d as dd\n
+#     ''',
+#     'file_b.py': '''
+# import file_c\n
+# import file_a\n
+#     ''',
+#     'file_c.py': 'import file_d\n',
+#     'file_d.py': 'import file_b\n'
+# }
 
-analyzer = ImportDependencyAnalyzer(files)
-analyzer.build_import_graph()
-circular_imports = analyzer.find_circular_imports()
+def get_cyclic(files):
+    structure = {}
+    analyzer = ImportDependencyAnalyzer(files)
+    analyzer.build_import_graph()
+    circular_imports = analyzer.find_circular_imports()
+    # Output the circular imports with filenames and line numbers
 
-# Output the circular imports with filenames and line numbers
-for imp in circular_imports:
-    print(f"File '{imp['file']}' has a circular import of '{imp['imports']}' at line {imp['line']}")
+    for imp in circular_imports:
+        if imp['file'] in structure:
+            structure[imp['file']].append(imp['line'])
+        else:
+            structure[imp['file']] = [imp['line']]
+    return structure
+        # print(f"File '{imp['file']}' has a circular import of '{imp['imports']}' at line {imp['line']}")

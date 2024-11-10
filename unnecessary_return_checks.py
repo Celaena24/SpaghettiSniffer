@@ -22,31 +22,34 @@ class UnnecessaryReturnChecker(ast.NodeVisitor):
     def report(self):
         return self.unnecessary_returns
 
-if __name__ == "__main__":
-    # Example code to check
-    code = """
-def foo():
-    if case1:
-        return True
-    else:
-        return False
+# if __name__ == "__main__":
+#     # Example code to check
+#     code = """
+# def foo():
+#     if case1:
+#         return True
+#     else:
+#         return False
 
-def bar():
-    if foo():
-        return True
+# def bar():
+#     if foo():
+#         return True
         
-def new():
-    cat = 5
-    dog = 7
-    if(cat > 5):
-        return dog == 7
-    """
+# def new():
+#     cat = 5
+#     dog = 7
+#     if(cat > 5):
+#         return dog == 7
+#     """
 
+def get_unnecessary_checks(code):
     tree = ast.parse(code)
     checker = UnnecessaryReturnChecker()
     checker.visit(tree)
     unnecessary_returns = checker.report()
     
-    
+    lines = []
     for lineno in unnecessary_returns:
-        print(f" - Line {lineno} has unnecessary if else returning boolean. Consider simplifying")
+        lines.append(lineno)
+        # print(f" - Line {lineno} has unnecessary if else returning boolean. Consider simplifying")
+    return lines
