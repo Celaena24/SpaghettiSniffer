@@ -86,18 +86,20 @@ highlights.forEach(({ tag, suggestion, start_line, end_line, line }) => {
         console.log("in longgg", highlights);
         // If tag is 'long', handle the long function body decoration
         const decorations = {
-            range: tag === "long"
-                ? new vscode.Range(start_line - 1, 0, end_line - 1, 100)
-                : new vscode.Range(line - 1, 0, line - 1, 100),
+            range: new vscode.Range(start_line - 1, 0, end_line - 1, 100), // Use both start and end lines
             hoverMessage: suggestion,
         };
-        if (tag === "long") {
-            longDecorations.push(decorations);
-        } else {
-            unusedDecorations.push(decorations);
-        }
-    }});
-
+        longDecorations.push(decorations);
+    } else {
+        console.log("in unuseddd");
+        // If tag is 'unused', handle the unused variable decoration
+        const decorations = {
+            range: new vscode.Range(line - 1, 0, line - 1, 100),
+            hoverMessage: suggestion,
+        };
+        unusedDecorations.push(decorations);
+    }
+});
     const allDecorations = [...longDecorations, ...unusedDecorations];
     editor.setDecorations(decorationType, allDecorations);
 }

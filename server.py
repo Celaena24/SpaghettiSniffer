@@ -129,7 +129,7 @@ def process_file_content(file_content,folder_content,current_file):
     for line in bad_variables:
         highlights.append({
                         "line": line,
-                        "suggestion": "bad variable name",
+                        "suggestion": lang.get_comment("bad variable name"),
                         "tag": "bad_variable_name"
                     })
     
@@ -137,7 +137,7 @@ def process_file_content(file_content,folder_content,current_file):
     for line in bad_var_usage:
         highlights.append({
                         "line": line,
-                        "suggestion": "bad variable usage",
+                        "suggestion": lang.get_comment("variable assignmed multiple times before usage"),
                         "tag": "bad_variable_usage"
                     })
         
@@ -145,14 +145,14 @@ def process_file_content(file_content,folder_content,current_file):
     for line in bad_comparison:
         highlights.append({
                         "line": line,
-                        "suggestion": "bad boolean comparison",
+                        "suggestion": lang.get_comment("unnecessary comparison against boolean literals"),
                         "tag": "bad_bool_comparison"
                     })
     statements = print_statements.get_print_statements(file_content)
     for line in statements:
         highlights.append({
                         "line": line,
-                        "suggestion": "print statement",
+                        "suggestion": lang.get_comment("print statements ill advised"),
                         "tag": "print_statement"
                     })
         
@@ -160,9 +160,10 @@ def process_file_content(file_content,folder_content,current_file):
     for line in unnecessary_checks:
         highlights.append({
                         "line": line,
-                        "suggestion": "unnecessary return check",
+                        "suggestion": lang.get_comment("Checking what the result is, then immediately returning that result, is redundant. Code can be made simpler"),
                         "tag": "unnecessary_return_check"
                     })
+
 
     # folder_insights = analyze_folder_contents(folder_content,current_file)
     analyze_folder_contents(folder_content,current_file)
