@@ -1,4 +1,4 @@
-import badexception, longfunctions, repeatedcodesegment, unusedimport, bad_context_management, dead_code, cyclomatic_complexity, hardcoded_values, deep_nesting
+import badexception, longfunctions, repeatedcodesegment, unusedimport, bad_context_management, dead_code, cyclomatic_complexity, hardcoded_values, deep_nesting, too_many_params
 
 # #find_bad_exception_handling
 # with open('test_bad_exception_handling.py') as f:
@@ -34,7 +34,7 @@ import badexception, longfunctions, repeatedcodesegment, unusedimport, bad_conte
 # print("Unused variables:", unused_vars)
 # print("Unused imports:", unused_imports)
 
-with open('test_deep_nesting.py') as f:
+with open('test_too_man_params.py') as f:
     source_code = f.read()
 # bad_context = bad_context_management.get_bad_context(source_code)
 # print("bad_context: ",bad_context[0]['line'])
@@ -52,5 +52,9 @@ with open('test_deep_nesting.py') as f:
 # for value in hardcoded:
 #     print(value['line'])
 
-deep_nest = deep_nesting.get_deep_nesting(source_code)
-print(deep_nest)
+# deep_nest = deep_nesting.get_deep_nesting(source_code)
+# print(deep_nest)
+
+too_many = too_many_params.get_too_many_params(source_code)
+for line in too_many:
+    print(line['line'])
