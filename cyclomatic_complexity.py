@@ -1,3 +1,25 @@
+source_code = '''
+def simple_function():
+    pass
+
+def complex_function(x):
+    if x > 0:
+        for i in range(x):
+            while i < 10:
+                if i % 2 == 0:
+                    print(i)
+    else:
+        try:
+            with open("file.txt") as f:
+                data = f.read()
+        except Exception as e:
+            print("Error")
+
+def another_function(y):
+    return y and (y > 0 or y < 10)
+'''
+
+
 import ast
 
 class CyclomaticComplexityVisitor(ast.NodeVisitor):
@@ -51,33 +73,18 @@ class CyclomaticComplexityVisitor(ast.NodeVisitor):
         self.generic_visit(node)
 
 # Example usage
-source_code = '''
-def simple_function():
-    pass
 
-def complex_function(x):
-    if x > 0:
-        for i in range(x):
-            while i < 10:
-                if i % 2 == 0:
-                    print(i)
-    else:
-        try:
-            with open("file.txt") as f:
-                data = f.read()
-        except Exception as e:
-            print("Error")
 
-def another_function(y):
-    return y and (y > 0 or y < 10)
-'''
-
+def get_cyclomatic_complexity(source_code):
 # Parse and analyze the code
-tree = ast.parse(source_code)
-visitor = CyclomaticComplexityVisitor()
-visitor.visit(tree)
+    tree = ast.parse(source_code)
+    visitor = CyclomaticComplexityVisitor()
+    visitor.visit(tree)
+    return visitor.complexities
 
-# Output the cyclomatic complexities
-for complexity in visitor.complexities:
-    print(f"Function '{complexity['function']}' at line {complexity['line']}: Cyclomatic Complexity = {complexity['complexity']}")
-
+# tree = ast.parse(source_code)
+# visitor = CyclomaticComplexityVisitor()
+# visitor.visit(tree)
+# # Output the cyclomatic complexities
+# for complexity in visitor.complexities:
+#     print(f"Function '{complexity['function']}' at line {complexity['line']}: Cyclomatic Complexity = {complexity['complexity']}")
