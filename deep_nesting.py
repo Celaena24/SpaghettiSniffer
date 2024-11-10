@@ -37,11 +37,19 @@ class DeepNestingVisitor(ast.NodeVisitor):
 with open('test_deep_nesting.py') as f:
     source_code = f.read()
 
-tree = ast.parse(source_code)
-visitor = DeepNestingVisitor(max_depth=3)  # Set max depth threshold
-visitor.visit(tree)
+def get_deep_nesting(source_code):
+    tree = ast.parse(source_code)
+    visitor = DeepNestingVisitor(max_depth=3)  # Set max depth threshold
+    deepnest = visitor.visit(tree)
+    lines_for_deepnest = []
+    for issue in visitor.deeply_nested:
+        lines_for_deepnest.append(issue['line'])
+    for issue in visitor.deeply_nested:
+        print(f"Line {issue['line']}: {issue['message']}")
 
-# Output the results
-for issue in visitor.deeply_nested:
-    print(f"Line {issue['line']}: {issue['message']}")
+    return lines_for_deepnest
+
+    # Output the results
+    for issue in visitor.deeply_nested:
+        print(f"Line {issue['line']}: {issue['message']}")
 

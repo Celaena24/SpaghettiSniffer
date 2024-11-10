@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-import unusedimport,longfunctions,badexception,bad_context_management
+import unusedimport,longfunctions,badexception,bad_context_management,dead_code, cyclomatic_complexity, hardcoded_values, deep_nesting
 app = Flask(__name__)
 
 @app.route('/process', methods=['POST'])
@@ -68,13 +68,48 @@ def process_file_content(file_content):
             })
         
     bad_context = bad_context_management.get_bad_context(file_content)
-    highlights.append({
-                "line": bad_context[0]['line'],
-                "suggestion": "nah nah open file properly hehe",
-                "tag": "bad_context"
-            })
+    for context in bad_context:
+        highlights.append({
+                    "line": context['line'],
+                    "suggestion": "nah nah open file properly hehe",
+                    "tag": "bad_context"
+                })
+    
+    dead_context = dead_code.get_dead_code(file_content)
+    for context in dead_context:
+        highlights.append({
+                    "line": context['line'],
+                    "suggestion": "Do you really want this code here?",
+                    "tag": "dead_context"
+                })
+        
+    cyclomatic_complex = cyclomatic_complexity.get_cyclomatic_complexity(file_content)
+    for complexity in cyclomatic_complex:
+        if complexity['complexity'] > 5:
+            highlights.append({
+                        "line": complexity['line'],
+                        "suggestion": "Nah Nah too complex for me",
+                        "tag": "cyclomatic_complex"
+                    })
+        # print(f"Function '{complexity['function']}' at line {complexity['line']}: Cyclomatic Complexity = {complexity['complexity']}")
 
-
+    
+    hardcoded = hardcoded_values.get_hardcoded(file_content)
+    for value in hardcoded:
+        highlights.append({
+                        "line": value['line'],
+                        "suggestion": "do you have an explanation for that value?",
+                        "tag": "hardcoded"
+                    })
+    deep_nest = deep_nesting.get_deep_nesting(file_content)
+    for nest in deep_nest:
+        highlights.append({
+                        "line": value['line'],
+                        "suggestion": "too deep cant do?",
+                        "tag": "deep_nesting"
+                    })
+         
+         
     return highlights
 
 

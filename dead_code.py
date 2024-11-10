@@ -38,10 +38,11 @@ class DeadCodeVisitor(ast.NodeVisitor):
 with open('test_dead_code.py') as f:
     source_code = f.read()
 
-tree = ast.parse(source_code)
-visitor = DeadCodeVisitor()
-visitor.visit(tree)
+def get_dead_code(source_code):
+    tree = ast.parse(source_code)
+    visitor = DeadCodeVisitor()
+    visitor.visit(tree)
 
-# Output the results
-print(visitor.unreachable_code)
+    # Output the results
+    return visitor.unreachable_code
 

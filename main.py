@@ -1,4 +1,4 @@
-import badexception, longfunctions, repeatedcodesegment, unusedimport, bad_context_management
+import badexception, longfunctions, repeatedcodesegment, unusedimport, bad_context_management, dead_code, cyclomatic_complexity, hardcoded_values, deep_nesting
 
 # #find_bad_exception_handling
 # with open('test_bad_exception_handling.py') as f:
@@ -34,7 +34,23 @@ import badexception, longfunctions, repeatedcodesegment, unusedimport, bad_conte
 # print("Unused variables:", unused_vars)
 # print("Unused imports:", unused_imports)
 
-with open('test_bad_context_management.py') as f:
+with open('test_deep_nesting.py') as f:
     source_code = f.read()
-bad_context = bad_context_management.get_bad_context(source_code)
-print("bad_context: ",bad_context[0]['line'])
+# bad_context = bad_context_management.get_bad_context(source_code)
+# print("bad_context: ",bad_context[0]['line'])
+
+# dead_code = dead_code.get_dead_code(source_code)
+# print("bad_context: ",dead_code)
+
+# cyclomatic_complex = cyclomatic_complexity.get_cyclomatic_complexity(source_code)
+# print(cyclomatic_complex)
+# for complexity in cyclomatic_complex:
+#         if complexity['complexity'] > 5:
+#             print(complexity['line'])
+
+# hardcoded = hardcoded_values.get_hardcoded(source_code)
+# for value in hardcoded:
+#     print(value['line'])
+
+deep_nest = deep_nesting.get_deep_nesting(source_code)
+print(deep_nest)
