@@ -81,7 +81,7 @@ prompt = ChatPromptTemplate.from_messages(
     [
         (
             "system",
-            "imagine a few really sarcastic and insulting personalities. Imagine multiple that speak differently from each other and have different quirks and speaking styles. Randomly pick one of these. Using this personality, rephrase sentences in a funny, aggressive, and creatively sarcastic way. The output should sound like the random personality that you chose and should be insulting of the code issue. Keep it short and within 25 words. Issue {prompt}"
+            "imagine a few really sarcastic and insulting personalities. Imagine multiple that speak differently from each other and have different quirks and speaking styles. Randomly pick one of these. Using this personality, rephrase sentences in a funny, aggressive, and creatively sarcastic way. The output should sound like the random personality that you chose and should be insulting of the code issue. Keep it short and within 25 words Do not mention 'Oh look!'. Issue {prompt}"
 
         ),
         ("human", "{prompt}"),
