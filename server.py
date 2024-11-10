@@ -80,7 +80,7 @@ def process_file_content(file_content,folder_content,current_file):
     for context in bad_context:
         highlights.append({
                     "line": context['line'],
-                    "suggestion": lang.get_comment("nah nah open file properly hehe"),
+                    "suggestion": lang.get_comment("file hasnt been opened safely"),
                     "tag": "bad_context"
                 })
     
@@ -179,7 +179,7 @@ def process_file_content(file_content,folder_content,current_file):
     for data in cycle_data_global[current_file.split('.')[0]]:
         highlights.append({
                         "line": data,
-                        "suggestion": "cyclic import!!!",
+                        "suggestion": lang.get_comment("code contains cyclic import"),
                         "tag": "cyclic_import"
                     })
 
