@@ -1,0 +1,6 @@
+flask
+pyngrok
+llama-cpp-python
+huggingface_hub
+jsonlines
+networkx
