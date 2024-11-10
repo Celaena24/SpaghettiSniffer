@@ -1,6 +1,12 @@
 flask
 pyngrok
-llama-cpp-python
+llama-cpp-python==0.1.9
 huggingface_hub
 jsonlines
 networkx
+langchain
+openai
+langchain_community
+langchain_core
+langchain_openai
+python-dotenv
