@@ -1,5 +1,5 @@
 {
-  "name": "hackumass",
+  "name": "spaghetti-sniffer",
   "displayName": "hackumass",
   "description": "",
   "version": "0.0.1",
@@ -9,7 +9,10 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [    "onDidOpenTextDocument",
+  "onDidSaveTextDocument",
+  "onLanguage:python"
+],
   "main": "./extension.js",
   "contributes": {
     "commands": [

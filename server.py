@@ -1,5 +1,6 @@
 import os,sys
 from flask import Flask, request, jsonify
+import lang
 # current_file_name = os.path.basename(__file__)
 # #print("file name: ",current_file_name)
 import unusedimport,longfunctions,badexception,bad_context_management,dead_code, cyclomatic_complexity, hardcoded_values, deep_nesting, too_many_params, multiple_files_duplicate_code, cyclic_imports, bad_variable_name, bad_variable_name, comparing_against_bool_literals, print_statements, unnecessary_return_checks
@@ -44,7 +45,7 @@ def process_file_content(file_content,folder_content,current_file):
             ##print(imports,unused_imports.get(imports))
             highlights.append({
                 "line": unused_imports.get(imports),
-                "suggestion": imports + " library isnt used, do better!!",
+                "suggestion": lang.get_comment("unused imports" + imports),
                 "tag": "unused"
             })
     
@@ -52,7 +53,7 @@ def process_file_content(file_content,folder_content,current_file):
             ##print(imports,unused_imports.get(imports))
             highlights.append({
                 "line": unused_vars.get(imports),
-                "suggestion": imports + " variable isnt used, do better!!",
+                "suggestion": lang.get_comment("unused variables" + imports),
                 "tag": "unused"
             })
 
@@ -62,7 +63,7 @@ def process_file_content(file_content,folder_content,current_file):
          highlights.append({
                 "start_line": start_line,
                 "end_line": end_line,
-                "suggestion": func_name + " too long!!!",
+                "suggestion": lang.get_comment("too long function" + func_name),
                 "tag": "long"
             })
     
@@ -71,7 +72,7 @@ def process_file_content(file_content,folder_content,current_file):
         # #print(f"Bad exception: Bad exception handling found on line {lineno}")
         highlights.append({
                 "line": lineno,
-                "suggestion": "can do better exceptions hehe",
+                "suggestion": lang.get_comment("bad exception handling"),
                 "tag": "exception"
             })
         
@@ -79,7 +80,7 @@ def process_file_content(file_content,folder_content,current_file):
     for context in bad_context:
         highlights.append({
                     "line": context['line'],
-                    "suggestion": "nah nah open file properly hehe",
+                    "suggestion": lang.get_comment("nah nah open file properly hehe"),
                     "tag": "bad_context"
                 })
     
@@ -87,7 +88,7 @@ def process_file_content(file_content,folder_content,current_file):
     for context in dead_context:
         highlights.append({
                     "line": context['line'],
-                    "suggestion": "Do you really want this code here?",
+                    "suggestion": lang.get_comment("dead code"),
                     "tag": "dead_context"
                 })
         
@@ -96,7 +97,7 @@ def process_file_content(file_content,folder_content,current_file):
         if complexity['complexity'] > 5:
             highlights.append({
                         "line": complexity['line'],
-                        "suggestion": "Nah Nah too complex for me",
+                        "suggestion": lang.get_comment("cyclomatic complexity too high"),
                         "tag": "cyclomatic_complex"
                     })
         # #print(f"Function '{complexity['function']}' at line {complexity['line']}: Cyclomatic Complexity = {complexity['complexity']}")
@@ -106,14 +107,14 @@ def process_file_content(file_content,folder_content,current_file):
     for value in hardcoded:
         highlights.append({
                         "line": value['line'],
-                        "suggestion": "do you have an explanation for that value?",
+                        "suggestion": lang.get_comment("no explanation for hardcoded value"),
                         "tag": "hardcoded"
                     })
     deep_nest = deep_nesting.get_deep_nesting(file_content)
     for nest in deep_nest:
         highlights.append({
                         "line": value['line'],
-                        "suggestion": "too deep cant do?",
+                        "suggestion": lang.get_comment("Nesting is too deep. Can't do"),
                         "tag": "deep_nesting"
                     })
     
@@ -121,14 +122,14 @@ def process_file_content(file_content,folder_content,current_file):
     for line in too_many:
         highlights.append({
                         "line": line['line'],
-                        "suggestion": "the params are confusing",
+                        "suggestion": lang.get_comment("too many params"),
                         "tag": "too_many_params"
                     })
     bad_variables = bad_variable_name.get_bad_variable_name(file_content)
     for line in bad_variables:
         highlights.append({
                         "line": line,
-                        "suggestion": "bad variable name",
+                        "suggestion": lang.get_comment("bad variable name"),
                         "tag": "bad_variable_name"
                     })
     
@@ -136,7 +137,7 @@ def process_file_content(file_content,folder_content,current_file):
     for line in bad_var_usage:
         highlights.append({
                         "line": line,
-                        "suggestion": "bad variable usage",
+                        "suggestion": lang.get_comment("variable assignmed multiple times before usage"),
                         "tag": "bad_variable_usage"
                     })
         
@@ -144,14 +145,14 @@ def process_file_content(file_content,folder_content,current_file):
     for line in bad_comparison:
         highlights.append({
                         "line": line,
-                        "suggestion": "bad boolean comparison",
+                        "suggestion": lang.get_comment("unnecessary comparison against boolean literals"),
                         "tag": "bad_bool_comparison"
                     })
     statements = print_statements.get_print_statements(file_content)
     for line in statements:
         highlights.append({
                         "line": line,
-                        "suggestion": "print statement",
+                        "suggestion": lang.get_comment("print statements ill advised"),
                         "tag": "print_statement"
                     })
         
@@ -159,9 +160,10 @@ def process_file_content(file_content,folder_content,current_file):
     for line in unnecessary_checks:
         highlights.append({
                         "line": line,
-                        "suggestion": "unnecessary return check",
+                        "suggestion": lang.get_comment("Checking what the result is, then immediately returning that result, is redundant. Code can be made simpler"),
                         "tag": "unnecessary_return_check"
                     })
+
 
     # folder_insights = analyze_folder_contents(folder_content,current_file)
     analyze_folder_contents(folder_content,current_file)
@@ -187,7 +189,6 @@ def process_file_content(file_content,folder_content,current_file):
 
 
     return highlights
-
 
     # # Split content by lines and look for keywords
     # lines = file_content.splitlines()

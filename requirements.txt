@@ -1,6 +1,5 @@
 flask
 pyngrok
-llama-cpp-python==0.1.9
 huggingface_hub
 jsonlines
 networkx
